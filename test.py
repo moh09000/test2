@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
+import time
 
 # Set up Selenium WebDriver (requires ChromeDriver)
 def setup_driver():
@@ -18,15 +19,19 @@ def read_urls_from_file(filename):
 # Visit URLs using Selenium to bypass Cloudflare
 def visit_urls_with_selenium(urls):
     driver = setup_driver()
+    num_urls_per_second = 10
+    visit_interval = 1 / num_urls_per_second  # Time interval between visits
+
     for url in urls:
         try:
             driver.get(url)
             print(f"Visited: {url}, Title: {driver.title}")
+            time.sleep(visit_interval)  # Wait for the defined interval
         except Exception as e:
             print(f"Error visiting {url}: {e}")
     driver.quit()
 
 if __name__ == "__main__":
-    urls_file = 'allurls'  # Change this to your file containing URLs
+    urls_file = 'urls.txt'  # Change this to your file containing URLs
     urls = read_urls_from_file(urls_file)
     visit_urls_with_selenium(urls)
